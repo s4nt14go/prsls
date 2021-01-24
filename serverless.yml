@@ -1,0 +1,17 @@
+service: workshop-${self:custom.name}
+
+custom:
+  name: santiago
+  email: santiagopergamo@gmail.com
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+functions:
+  get-index:
+    handler: functions/get-index.handler
+    events:
+      - http:
+          path: /
+          method: get
