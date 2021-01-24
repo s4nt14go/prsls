@@ -2,6 +2,7 @@ service: workshop-${self:custom.name}
 
 plugins:
   - serverless-export-env
+  - serverless-pseudo-parameters
 
 custom:
   name: santiago
@@ -23,6 +24,8 @@ functions:
       - http:
           path: /
           method: get
+    environment:
+      restaurants_api: https://#{ApiGatewayRestApi}.execute-api.#{AWS::Region}.amazonaws.com/${self:provider.stage}/restaurants
 
   get-restaurants:
     handler: functions/get-restaurants.handler
