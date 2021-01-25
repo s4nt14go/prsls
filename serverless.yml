@@ -3,10 +3,14 @@ service: workshop-${self:custom.name}
 plugins:
   - serverless-export-env
   - serverless-pseudo-parameters
+  - serverless-api-gateway-throttling
 
 custom:
   name: santiago
   email: santiagopergamo@gmail.com
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 10
+    maxConcurrentRequests: 10
 
 provider:
   name: aws

@@ -1,0 +1,20 @@
+config:
+  target: "{{ $processEnvironment.API }}"
+  phases:
+    - duration: 10
+      arrivalRate: 15
+      name: Test1
+  defaults:
+    headers:
+      Authorization: "Bearer {{ $processEnvironment.TOKEN }}"
+  processor: "./processor.js"
+scenarios:
+  - name: "Get home and search"
+    flow:
+      - get:
+          url: "/"
+      - post:
+          url: "/restaurants/search"
+          json:
+            theme: "cartoon"
+          afterResponse: "logResponse"
