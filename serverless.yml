@@ -60,6 +60,18 @@ functions:
       restaurants_table: !Ref RestaurantsTable
 
 resources:
+
+  Transform:
+    # assuming this is the name you gave the macro when you deployed the SAR app
+    - AddCloudWatchAlarms
+  Parameters:
+    MacroParamStage:
+      Type: String
+      Default: ${self:provider.stage}
+    MacroParamTopicArn:
+      Type: String
+      Default: arn:aws:sns:us-east-1:383542339255:AddCloudWatchAlarmsMacro
+
   Resources:
     RestaurantsTable:
       Type: AWS::DynamoDB::Table
