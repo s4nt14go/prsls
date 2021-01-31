@@ -1,9 +1,7 @@
-const middy = require('@middy/core')
-const ssm = require('@middy/ssm')
 const DocumentClient = require('aws-sdk/clients/dynamodb').DocumentClient
 const dynamodb = new DocumentClient()
+const wrap = require('../lib/wrapper')
 
-const { serviceName, stage } = process.env
 const tableName = process.env.restaurants_table
 
 const findRestaurantsByTheme = async (theme, count) => {
@@ -21,7 +19,7 @@ const findRestaurantsByTheme = async (theme, count) => {
   return resp.Items
 }
 
-module.exports.handler = middy(async (event, context) => {
+module.exports.handler = wrap(async (event, context) => {
   console.info('context.secretString', context.secretString);
   if (context.secretString == undefined) throw Error(`secretString not gotten`);
   const req = JSON.parse(event.body)
@@ -33,30 +31,4 @@ module.exports.handler = middy(async (event, context) => {
   }
 
   return response
-}).use(middleware1())
-  .use(middleware2());
-
-function middleware1(){
-  return ssm({
-    cache: true,
-    cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
-    names: {
-      config: `/${serviceName}/${stage}/search-restaurants/config`
-    },
-    onChange: () => {
-      const config = JSON.parse(process.env.config)
-      process.env.defaultResults = config.defaultResults
-    }
-  })
-}
-
-function middleware2() {
-  return ssm({
-    cache: true,
-    cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
-    names: {
-      secretString: `/${serviceName}/${stage}/search-restaurants/secretString`
-    },
-    setToContext: true
-  })
-}
+});
