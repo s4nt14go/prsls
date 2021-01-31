@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk')
 const chance  = require('chance').Chance()
+const DocumentClient = new AWS.DynamoDB.DocumentClient()
 
 // needs number, special char, upper and lower case
 const random_password = () => `${chance.string({ length: 8})}B!gM0uth`
@@ -67,6 +68,37 @@ const an_authenticated_user = async () => {
   }
 }
 
+const restaurants_with_a_theme = async (theme, quantity) => {
+
+  const images = ["https://d2qt42rcwzspd6.cloudfront.net/manning/fangtasia.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/shoney's.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/freddy's+bbq+joint.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/pizza+planet.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/leaky+cauldron.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/lil+bits.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/fancy+eats.png", "https://d2qt42rcwzspd6.cloudfront.net/manning/don%20cuco.png"]
+
+  let restaurants = [];
+  for (let i = 0; i < quantity; i++) {
+    restaurants.push({
+      name: chance.company(),
+      image: images[Math.floor(Math.random()*images.length)],
+      themes: [theme]
+    })
+  }
+
+  const putReqs = restaurants.map(x => ({
+    PutRequest: {
+      Item: x
+    }
+  }))
+
+  const req = {
+    RequestItems: {
+      [process.env.restaurants_table]: putReqs
+    }
+  }
+
+  await DocumentClient.batchWrite(req).promise()
+  console.info(`${quantity} restaurants put in table with theme ${theme}`)
+  return restaurants;
+}
+
 module.exports = {
-  an_authenticated_user
+  an_authenticated_user,
+  restaurants_with_a_theme,
 }

@@ -4,6 +4,17 @@ const wrap = require('../lib/wrapper')
 
 const tableName = process.env.restaurants_table
 
+const scanTable = async (params) => {
+  let scanResults = [];
+  let items;
+  do{
+    items =  await dynamodb.scan(params).promise();
+    items.Items.forEach((item) => scanResults.push(item));
+    params.ExclusiveStartKey  = items.LastEvaluatedKey;
+  }while(typeof items.LastEvaluatedKey != 'undefined');
+  return scanResults;
+};
+
 const findRestaurantsByTheme = async (theme, count) => {
   if (typeof Number(count) !== 'number') throw Error(`Invalid count: ${count}`);
   console.log(`finding (up to ${count}) restaurants with the theme ${theme}...`)
@@ -14,21 +25,19 @@ const findRestaurantsByTheme = async (theme, count) => {
     ExpressionAttributeValues: { ":theme": theme }
   }
 
-  const resp = await dynamodb.scan(req).promise()
-  console.log(`found ${resp.Items.length} restaurants`)
-  return resp.Items
+  const resp = await scanTable(req);
+  console.log(`found ${resp.length} restaurants`)
+  return resp
 }
 
 module.exports.handler = wrap(async (event, context) => {
-  console.info('context.secretString', context.secretString);
-  if (context.secretString == undefined) throw Error(`secretString not gotten`);
+  console.log('context.secretString', context.secretString);
+  if (context.secretString === undefined) throw Error(`secretString not gotten`);
   const req = JSON.parse(event.body)
   const theme = req.theme
   const restaurants = await findRestaurantsByTheme(theme, process.env.defaultResults)
-  const response = {
+  return {
     statusCode: 200,
     body: JSON.stringify(restaurants)
   }
-
-  return response
 });
