@@ -33,21 +33,30 @@ module.exports.handler = middy(async (event, context) => {
   }
 
   return response
-}).use(ssm({
-  cache: true,
-  cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
-  names: {
-    config: `/${serviceName}/${stage}/search-restaurants/config`
-  },
-  onChange: () => {
-    const config = JSON.parse(process.env.config)
-    process.env.defaultResults = config.defaultResults
-  }
-})).use(ssm({
-  cache: true,
-  cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
-  names: {
-    secretString: `/${serviceName}/${stage}/search-restaurants/secretString`
-  },
-  setToContext: true
-}))
+}).use(middleware1())
+  .use(middleware2());
+
+function middleware1(){
+  return ssm({
+    cache: true,
+    cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
+    names: {
+      config: `/${serviceName}/${stage}/search-restaurants/config`
+    },
+    onChange: () => {
+      const config = JSON.parse(process.env.config)
+      process.env.defaultResults = config.defaultResults
+    }
+  })
+}
+
+function middleware2() {
+  return ssm({
+    cache: true,
+    cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
+    names: {
+      secretString: `/${serviceName}/${stage}/search-restaurants/secretString`
+    },
+    setToContext: true
+  })
+}
