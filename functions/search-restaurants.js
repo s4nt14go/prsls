@@ -7,6 +7,7 @@ const { serviceName, stage } = process.env
 const tableName = process.env.restaurants_table
 
 const findRestaurantsByTheme = async (theme, count) => {
+  if (typeof Number(count) !== 'number') throw Error(`Invalid count: ${count}`);
   console.log(`finding (up to ${count}) restaurants with the theme ${theme}...`)
   const req = {
     TableName: tableName,
@@ -21,7 +22,8 @@ const findRestaurantsByTheme = async (theme, count) => {
 }
 
 module.exports.handler = middy(async (event, context) => {
-  console.info(context.secretString)
+  console.info('context.secretString', context.secretString);
+  if (context.secretString == undefined) throw Error(`secretString not gotten`);
   const req = JSON.parse(event.body)
   const theme = req.theme
   const restaurants = await findRestaurantsByTheme(theme, process.env.defaultResults)
