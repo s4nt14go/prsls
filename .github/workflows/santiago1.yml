@@ -1,4 +1,4 @@
-# Each developer has their own branches to work on new features
+# Each developer has their own branches in ci/cd to work on new features
 name: deploy santiago's work
 
 on:
