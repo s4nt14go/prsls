@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "sls": "sls",
+    "cross-env": "cross-env",
     "artillery": "artillery run artillery/artillery.yml",
     "dotEnv": "sls export-env",
     "test": "npm run dotEnv && cross-env TEST_MODE=handler jest",

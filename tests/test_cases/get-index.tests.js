@@ -19,6 +19,6 @@ describe(`When we invoke the GET / endpoint`, () => {
 
     const $ = cheerio.load(res.body)
     const restaurants = $('.restaurant', '#restaurantsUl')
-    expect(restaurants.length).toEqual(8)
+    expect(restaurants.length).toBeGreaterThanOrEqual(8)  // As search-restaurants.tests.js creates restaurants we may get some of them
   })
 })
