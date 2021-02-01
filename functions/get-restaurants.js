@@ -1,7 +1,6 @@
 const middy = require('@middy/core')
 const ssm = require('@middy/ssm')
-const DocumentClient = require('aws-sdk/clients/dynamodb').DocumentClient
-const dynamodb = new DocumentClient()
+const { scanTable } = require('../lib/table')
 
 const { serviceName/*, stage*/ } = process.env
 const tableName = process.env.restaurants_table
@@ -13,9 +12,9 @@ const getRestaurants = async (count) => {
     Limit: count
   }
 
-  const resp = await dynamodb.scan(req).promise()
-  console.log(`found ${resp.Items.length} restaurants`)
-  return resp.Items
+  const resp = await scanTable(req);
+  console.log(`found ${resp.length} restaurants`)
+  return resp
 }
 
 module.exports.handler = middy(async (event, context) => {

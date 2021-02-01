@@ -1,19 +1,7 @@
-const DocumentClient = require('aws-sdk/clients/dynamodb').DocumentClient
-const dynamodb = new DocumentClient()
 const wrap = require('../lib/wrapper')
+const { scanTable } = require('../lib/table')
 
 const tableName = process.env.restaurants_table
-
-const scanTable = async (params) => {
-  let scanResults = [];
-  let items;
-  do{
-    items =  await dynamodb.scan(params).promise();
-    items.Items.forEach((item) => scanResults.push(item));
-    params.ExclusiveStartKey  = items.LastEvaluatedKey;
-  }while(typeof items.LastEvaluatedKey != 'undefined');
-  return scanResults;
-};
 
 const findRestaurantsByTheme = async (theme, count) => {
   if (typeof Number(count) !== 'number') throw Error(`Invalid count: ${count}`);
