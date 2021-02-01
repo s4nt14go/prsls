@@ -1,3 +1,4 @@
+// node seed-restaurants.js
 const AWS = require('aws-sdk')
 AWS.config.region = 'us-east-1'
 const dynamodb = new AWS.DynamoDB.DocumentClient()

@@ -26,7 +26,13 @@ const getRestaurants = async () => {
   const httpReq = http.get(restaurantsApiRoot, {
     headers: opts.headers
   })
-  return (await httpReq).data
+  console.info(`Will try to get ${restaurantsApiRoot}`);
+  try {
+    return (await httpReq).data;
+  } catch (e) {
+    console.error(`Error when getting ${restaurantsApiRoot}`, e);
+    return e
+  }
 }
 
 module.exports.handler = async (event, context) => {
@@ -42,13 +48,11 @@ module.exports.handler = async (event, context) => {
     searchUrl: `${restaurantsApiRoot}/search`
   }
   const html = Mustache.render(template, view)
-  const response = {
+  return response = {
     statusCode: 200,
     headers: {
       'content-type': 'text/html; charset=UTF-8'
     },
     body: html
   }
-
-  return response
 }
