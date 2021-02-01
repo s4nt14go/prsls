@@ -10,6 +10,8 @@ describe('Given an authenticated user', () => {
 
   beforeAll(async () => {
     await init()
+    await given.eight_initial_restaurants();
+
     user = await given.an_authenticated_user()
 
     quantity = chance.integer({ min: 1, max: 5 });
