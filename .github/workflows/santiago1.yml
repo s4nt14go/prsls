@@ -1,3 +1,4 @@
+# Each developer has their own branches to work on new features
 name: deploy santiago's work
 
 on:
@@ -42,7 +43,7 @@ jobs:
           export AWS_ACCESS_KEY_ID=`echo $CREDS | jq -r '.Credentials.AccessKeyId'`
           export AWS_SECRET_ACCESS_KEY=`echo $CREDS | jq -r '.Credentials.SecretAccessKey'`
           export AWS_SESSION_TOKEN=`echo $CREDS | jq -r '.Credentials.SessionToken'`
-          sls export-env -s santiago1
+          npm run sls -- export-env -s santiago1
           cross-env TEST_MODE=handler jest
       - name: deploy to dev
         run: |
@@ -57,5 +58,5 @@ jobs:
           export AWS_ACCESS_KEY_ID=`echo $CREDS | jq -r '.Credentials.AccessKeyId'`
           export AWS_SECRET_ACCESS_KEY=`echo $CREDS | jq -r '.Credentials.SecretAccessKey'`
           export AWS_SESSION_TOKEN=`echo $CREDS | jq -r '.Credentials.SessionToken'`
-          sls export-env -s santiago1
+          npm run sls -- export-env -s santiago1
           cross-env TEST_MODE=http jest
