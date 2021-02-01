@@ -35,5 +35,6 @@ module.exports.handler = middy(async (event, context) => {
   onChange: () => {
     const config = JSON.parse(process.env.config)
     process.env.defaultResults = config.defaultResults
-  }
+  },
+  throwOnFailedCall: true
 }))
