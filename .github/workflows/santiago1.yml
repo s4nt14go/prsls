@@ -44,7 +44,7 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=`echo $CREDS | jq -r '.Credentials.SecretAccessKey'`
           export AWS_SESSION_TOKEN=`echo $CREDS | jq -r '.Credentials.SessionToken'`
           npm run sls -- export-env -s santiago1
-          cross-env TEST_MODE=handler jest
+          npm run cross-env -- TEST_MODE=handler jest
       - name: deploy to dev
         run: |
           CREDS=`aws sts assume-role --role-arn arn:aws:iam::${{ secrets.DEV_ACCOUNT_ID }}:role/ci-role --role-session-name=ci_user`
@@ -59,4 +59,4 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=`echo $CREDS | jq -r '.Credentials.SecretAccessKey'`
           export AWS_SESSION_TOKEN=`echo $CREDS | jq -r '.Credentials.SessionToken'`
           npm run sls -- export-env -s santiago1
-          cross-env TEST_MODE=http jest
+          npm run cross-env -- TEST_MODE=http jest
