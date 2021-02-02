@@ -16,6 +16,10 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
+  stackTags:
+    STACK: ${self:service}
+  tags:
+    STACK: ${self:service}
   environment:
     serviceName: ${self:service}
     stage: ${self:custom.stage}
