@@ -38,6 +38,9 @@ provider:
       Action: kms:Decrypt
       # Use parameters from dev for all environments
       Resource: ${ssm:/dev/kmsArn}
+    - Effect: Allow
+      Action: events:PutEvents
+      Resource: "*"
 
 functions:
   get-index:
@@ -78,6 +81,19 @@ functions:
             arn: !GetAtt CognitoUserPool.Arn
     environment:
       restaurants_table: !Ref RestaurantsTable
+
+  place-order:
+    handler: functions/place-order.handler
+    events:
+      - http:
+          path: /orders
+          method: post
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt CognitoUserPool.Arn
+    environment:
+      bus_name: !Ref EventBus
 
 resources:
 
@@ -172,6 +188,11 @@ resources:
               - !Ref ApiGatewayRestApi
               - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
 
+    EventBus:
+      Type: AWS::Events::EventBus
+      Properties:
+        Name: order_events_${self:custom.stage}
+
 
   Outputs:
 
@@ -197,3 +218,6 @@ resources:
 
     CognitoUserPoolServerClientId:
       Value: !Ref ServerCognitoUserPoolClient
+
+    EventBusName:
+      Value: !Ref EventBus
