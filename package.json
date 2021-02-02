@@ -8,8 +8,8 @@
     "cross-env": "cross-env",
     "artillery": "artillery run artillery/artillery.yml",
     "dotEnv": "sls export-env",
-    "test": "npm run dotEnv && cross-env TEST_MODE=handler jest",
-    "acceptance": "npm run dotEnv && cross-env TEST_MODE=http jest"
+    "test": "npm run dotEnv && cross-env TEST_MODE=handler jest --verbose",
+    "acceptance": "npm run dotEnv && cross-env TEST_MODE=http jest --verbose"
   },
   "keywords": [],
   "author": "",

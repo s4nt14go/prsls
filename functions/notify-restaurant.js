@@ -7,7 +7,6 @@ const busName = process.env.bus_name
 const topicArn = process.env.restaurant_notification_topic
 
 module.exports.handler = async (event) => {
-  console.info('event', event);
   const order = event.detail
   const snsReq = {
     Message: JSON.stringify(order),
