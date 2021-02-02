@@ -58,6 +58,12 @@ functions:
             - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}/restaurants
       cognito_user_pool_id: !Ref CognitoUserPool
       cognito_client_id: !Ref WebCognitoUserPoolClient
+      orders_api:
+        Fn::Join:
+          - ""
+          - - https://
+            - !Ref ApiGatewayRestApi
+            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}/orders
 
   get-restaurants:
     handler: functions/get-restaurants.handler
