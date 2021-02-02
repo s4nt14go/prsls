@@ -223,6 +223,44 @@ resources:
     RestaurantNotificationTopic:
       Type: AWS::SNS::Topic
 
+    E2eTestQueue:
+      Type: AWS::SQS::Queue
+      Condition: IsE2eTest
+      Properties:
+        MessageRetentionPeriod: 60
+        VisibilityTimeout: 1
+    E2eTestQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Condition: IsE2eTest
+      Properties:
+        Queues:
+          - !Ref E2eTestQueue
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            Effect: Allow
+            Principal: "*"
+            Action: SQS:SendMessage
+            Resource: !GetAtt E2eTestQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref RestaurantNotificationTopic
+    E2eTestSnsSubscription:
+      Type: AWS::SNS::Subscription
+      Condition: IsE2eTest
+      Properties:
+        Protocol: sqs
+        Endpoint: !GetAtt E2eTestQueue.Arn
+        RawMessageDelivery: false
+        Region: "#{AWS::Region}"
+        TopicArn: !Ref RestaurantNotificationTopic
+
+  Conditions:
+    IsE2eTest:
+      Fn::Equals:
+        - ${self:custom.stage}
+        - dev
+
 
   Outputs:
 
@@ -257,3 +295,7 @@ resources:
 
     RestaurantNotificationTopicArn:
       Value: !Ref RestaurantNotificationTopic
+
+    E2eTestQueueUrl:
+      Condition: IsE2eTest
+      Value: !Ref E2eTestQueue

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "sls": "sls",
+    "d": "sls deploy",
     "cross-env": "cross-env",
     "artillery": "artillery run artillery/artillery.yml",
     "dotEnv": "sls export-env",
