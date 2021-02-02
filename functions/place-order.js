@@ -24,7 +24,7 @@ module.exports.handler = async (event) => {
 
   console.log(`published 'order_placed' event into EventBridge`)
 
-  return response = {
+  return {
     statusCode: 200,
     body: JSON.stringify({ orderId })
   }
