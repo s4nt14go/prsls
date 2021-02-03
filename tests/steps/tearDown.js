@@ -29,7 +29,7 @@ const restaurants_created = async (restaurants) => {
   }
 
   await DocumentClient.batchWrite(req).promise()
-  console.info(`${deleteReqs.length} restaurants deleted with themes ${restaurants[0].themes}`);
+  console.log(`${deleteReqs.length} restaurants deleted with themes ${restaurants[0].themes}`);
 }
 
 module.exports = {

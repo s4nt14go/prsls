@@ -16,7 +16,7 @@ describe('Given an authenticated user', () => {
 
     quantity = chance.integer({ min: 1, max: 5 });
     theme = chance.animal();
-    console.info('Random theme', theme);
+    console.log('Random theme', theme);
     restaurantsCreated = await given.restaurants_with_a_theme(theme, quantity)
   })
 

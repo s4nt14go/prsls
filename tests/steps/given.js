@@ -137,7 +137,7 @@ const restaurants_with_a_theme = async (theme, quantity) => {
   }
 
   await DocumentClient.batchWrite(req).promise()
-  console.info(`${quantity} restaurants put in table with theme ${theme}`)
+  console.log(`${quantity} restaurants put in table with theme ${theme}`)
   return restaurants;
 }
 
