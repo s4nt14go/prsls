@@ -4,7 +4,7 @@ const chance = require('chance').Chance()
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const DocumentClient = new DynamoDB.DocumentClient();
 
-const { busName, orders_table } = process.env
+const { bus_name, orders_table } = process.env
 
 module.exports.handler = async (event) => {
   const restaurantName = JSON.parse(event.body).restaurantName
@@ -20,7 +20,7 @@ module.exports.handler = async (event) => {
         orderId,
         restaurantName,
       }),
-      EventBusName: busName
+      EventBusName: bus_name
     }]
   }).promise()
 
@@ -31,6 +31,7 @@ module.exports.handler = async (event) => {
     restaurantName,
     sub: event.requestContext.authorizer.claims.sub,
     placedAt: new Date().toJSON(),
+    status: 'order_placed'
   };
   await DocumentClient.put({
     TableName: orders_table,

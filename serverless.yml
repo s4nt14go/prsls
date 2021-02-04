@@ -118,6 +118,25 @@ functions:
         Action: dynamodb:PutItem
         Resource: !GetAtt OrdersTable.Arn
 
+  order-acceptance:
+    handler: functions/order-acceptance.handler
+    events:
+      - http:
+          path: /order/acceptance
+          method: post
+    environment:
+      bus_name: !Ref EventBus
+      orders_table: !Ref OrdersTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: events:PutEvents
+        Resource: "*"
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+          - dynamodb:GetItem
+        Resource: !GetAtt OrdersTable.Arn
+
   notify-restaurant:
     handler: functions/notify-restaurant.handler
     events:
