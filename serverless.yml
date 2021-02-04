@@ -25,24 +25,6 @@ provider:
     serviceName: ${self:service}
     stage: ${self:custom.stage}
 
-#  iamRoleStatements:
-#    - Effect: Allow
-#      Action: dynamodb:scan
-#      Resource: !GetAtt RestaurantsTable.Arn
-#    - Effect: Allow
-#      Action: ssm:GetParameters*
-#      Resource:
-#         Use parameters from dev for all environments
-#        - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/get-restaurants/config
-#        - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
-#        - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/secretString
-#    - Effect: Allow
-#      Action: events:PutEvents
-#      Resource: "*"
-#    - Effect: Allow
-#      Action: sns:Publish
-#      Resource: !Ref RestaurantNotificationTopic
-
 functions:
   get-index:
     handler: functions/get-index.handler
