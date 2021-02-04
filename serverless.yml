@@ -109,10 +109,14 @@ functions:
             arn: !GetAtt CognitoUserPool.Arn
     environment:
       bus_name: !Ref EventBus
+      orders_table: !Ref OrdersTable
     iamRoleStatements:
       - Effect: Allow
         Action: events:PutEvents
         Resource: "*"
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource: !GetAtt OrdersTable.Arn
 
   notify-restaurant:
     handler: functions/notify-restaurant.handler
@@ -300,6 +304,17 @@ resources:
                   },
                   "eventBusName": "#{EventBus}"
                 }
+
+    OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: orderId
+            KeyType: HASH
 
   Conditions:
     IsE2eTest:

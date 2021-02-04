@@ -1,8 +1,10 @@
 const EventBridge = require('aws-sdk/clients/eventbridge')
 const eventBridge = new EventBridge()
 const chance = require('chance').Chance()
+const DynamoDB = require('aws-sdk/clients/dynamodb');
+const DocumentClient = new DynamoDB.DocumentClient();
 
-const busName = process.env.bus_name
+const { busName, orders_table } = process.env
 
 module.exports.handler = async (event) => {
   const restaurantName = JSON.parse(event.body).restaurantName
@@ -23,6 +25,17 @@ module.exports.handler = async (event) => {
   }).promise()
 
   console.log(`published 'order_placed' event into EventBridge`)
+
+  let Item = {
+    orderId,
+    restaurantName,
+    sub: event.requestContext.authorizer.claims.sub,
+    placedAt: new Date().toJSON(),
+  };
+  await DocumentClient.put({
+    TableName: orders_table,
+    Item,
+  }).promise();
 
   return {
     statusCode: 200,
