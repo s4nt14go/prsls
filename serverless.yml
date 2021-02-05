@@ -158,6 +158,23 @@ functions:
         Action: sns:Publish
         Resource: !Ref RestaurantNotificationTopic
 
+  orders-status:
+    handler: functions/orders-status.handler
+    events:
+      - http:
+          path: /orders/status
+          method: get
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt CognitoUserPool.Arn
+    environment:
+      orders_table: !Ref OrdersTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:Query
+        Resource: !Sub "${OrdersTable.Arn}/index/bySub"
+
 resources:
 
   Transform:
@@ -328,12 +345,21 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: orderId
-            AttributeType: S
         KeySchema:
           - AttributeName: orderId
             KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+          - AttributeName: sub
+            AttributeType: S
+        GlobalSecondaryIndexes:
+          - IndexName: bySub
+            KeySchema:
+              - AttributeName: sub
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
   Conditions:
     IsE2eTest:

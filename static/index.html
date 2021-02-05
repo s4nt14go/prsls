@@ -148,6 +148,52 @@
       enable === true ? $('#register').show() : $('#register').hide();
     }
 
+    const sleep = 5, statusUrl = PLACE_ORDER_URL + `/status`;
+    let notifications;
+    let signedIn = false;
+    async function fetchOrdersStatus() {
+      let abortMsg, abort = false;
+      if (!idToken) {
+        abort = true;
+        abortMsg = `Abort fetching orders status since there is no idToken`;
+      } else if (!signedIn) {
+        abort = true;
+        abortMsg = `Abort fetching orders since user singed out`;
+      }
+      if(!notifications) notifications = document.getElementById("notifications");
+      if (abort) {
+        return console.log(abortMsg);
+      }
+
+      console.log(`fetching ${statusUrl}...`);
+      const orders = await fetch(statusUrl, {headers: {
+          'Authorization': idToken
+        }})
+        .then(response => {
+          return response.json();
+        })
+        .catch(e => {
+          console.log(e);
+          return e;
+        });
+
+      console.log(`orders`, orders);
+      notifications.innerHTML = `Response from server: <b>${orders}</b>`;
+      if (orders.length) {
+        notifications.innerHTML = `<ul>`;
+        notifications.innerHTML += orders.map(o => {
+          return `<li>Order: <b>${o.orderId}</b>, Restaurant: <b>${o.restaurantName}</b>, Status: <b>${o.status}</b></li>`;
+        }).join('');
+        notifications.innerHTML += `</ul>`;
+      } else if (orders.length === 0) {
+        notifications.innerHTML = `<b>No orders requested</b>`;
+      }
+      console.log(`Schedule fetchOrdersStatus to fire in ${sleep}s`);
+      setTimeout(()=>{
+        fetchOrdersStatus();
+      }, sleep*1000)
+    }
+
     function init() {
       AWS.config.region = AWS_REGION;
       AWSCognito.config.region = AWS_REGION;
@@ -168,7 +214,14 @@
 
           idToken = session.idToken.jwtToken;
           console.log('idToken: ' + idToken);
-          console.log('session validity: ' + session.isValid());
+          const isValid = session.isValid();
+          console.log('session validity: ' + isValid);
+          if (isValid) {
+            signedIn = true;
+            fetchOrdersStatus();
+          } else {
+            console.log(`Won't fetch orders status since token isn't valid`);
+          }
         });
 
         toggleSignOut(true);
@@ -253,6 +306,8 @@
           toggleRegister(false);
           toggleSignIn(false);
           toggleSignOut(true);
+          signedIn = true;
+          fetchOrdersStatus();
         },
 
         onFailure: function(err) {
@@ -268,6 +323,8 @@
         toggleSignIn(true);
         toggleSignOut(false);
       }
+      signedIn = false;
+      notifications.innerHTML = '';
     }
 
     function searchRestaurants() {
@@ -419,6 +476,9 @@
       <input id="theme" type="text" size="50" placeholder="enter a theme, eg. rick and morty"/>
       <button onclick="searchRestaurants()">Find Restaurants</button>
     </li>
+
+    <li class="item">
+      <div id="notifications" />
     <li>
       <div class="restaurantsDiv column-container">
         <b class="dayOfWeek">{{dayOfWeek}}</b>

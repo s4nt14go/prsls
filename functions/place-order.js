@@ -30,7 +30,7 @@ module.exports.handler = async (event) => {
     orderId,
     restaurantName,
     sub: event.requestContext.authorizer.claims.sub,
-    placedAt: new Date().toJSON(),
+    updatedAt: new Date().toJSON(),
     status: 'order_placed'
   };
   await DocumentClient.put({
