@@ -388,6 +388,7 @@
     }
 
     function searchRestaurants() {
+      if (!signedIn) return alert('Please sign in before searching a restaurant');
       var theme = $("#theme")[0].value;
 
       var xhr = new XMLHttpRequest();
@@ -534,7 +535,7 @@
       <img id="logo" src="https://d2qt42rcwzspd6.cloudfront.net/manning/big-mouth.png">
     </li>
     <li class="item">
-      <input id="theme" type="text" size="50" placeholder="enter a theme, eg. rick and morty"/>
+      <input id="theme" type="text" size="50" placeholder="enter a theme, eg. cartoon"/>
       <button onclick="searchRestaurants()">Find Restaurants</button>
     </li>
 
