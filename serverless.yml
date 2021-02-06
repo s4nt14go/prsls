@@ -204,6 +204,25 @@ functions:
         Action: events:PutEvents
         Resource: "*"
 
+  order-delete:
+    handler: functions/order-delete.handler
+    events:
+      - http:
+          path: /order/delete/{orderId}
+          method: get
+    environment:
+      orders_table: !Ref OrdersTable
+      bus_name: !Ref EventBus
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:DeleteItem
+        Resource: !GetAtt OrdersTable.Arn
+      - Effect: Allow
+        Action: events:PutEvents
+        Resource: "*"
+
 resources:
 
   Transform:

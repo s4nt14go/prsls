@@ -10,3 +10,10 @@
     curl -d '{"orderId":"'"${ORDER}"'", "acceptance":"'"${ACCEPTANCE}"'"}' -H "Content-Type: application/json" -X POST $URL
     ```
 1. In the case you accepted the order you can complete it
+1. Once you complete or reject the order you can delete it curling like this:
+   ```shell script
+   ENDPOINT=https://4pa10h0ae2.execute-api.us-east-1.amazonaws.com/dev/order/delete
+   ORDER=<your order>
+   curl --request GET \
+     --url $ENDPOINT/$ORDER
+   ```
