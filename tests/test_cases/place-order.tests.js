@@ -55,7 +55,7 @@ describe('Given an authenticated user', () => {
         })
       })
     } else {
-      it(`Should publish a message to EventBridge bus`, async () => {
+      it(`Should publish a message to EventBridge bus`, async (done) => {
         const { orderId } = resp.body
 
         await messages.waitForMessage(
@@ -70,6 +70,7 @@ describe('Given an authenticated user', () => {
             }
           })
         )
+        done();
       }, 10000)
     }
   })
