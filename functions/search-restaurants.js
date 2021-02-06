@@ -9,8 +9,10 @@ const findRestaurantsByTheme = async (theme, count) => {
   const req = {
     TableName: tableName,
     Limit: count,
-    FilterExpression: "contains(themes, :theme)",
-    ExpressionAttributeValues: { ":theme": theme }
+  }
+  if (theme.trim() !== '') {  // In the case the user sent a void string, the scan will return all restaurants (working as a reset of previous searches), in other cases searches for a matching theme
+    req['FilterExpression'] = "contains(themes, :theme)";
+    req['ExpressionAttributeValues'] = { ":theme": theme }
   }
 
   const resp = await scanTable(req);
