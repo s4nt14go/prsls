@@ -406,7 +406,7 @@
           for (var restaurant of restaurants) {
             restaurantsList.append(`
               <li class="restaurant">
-                <ul class="column-container" onclick='placeOrder("${restaurant.name}")'>
+                <ul class="column-container" onclick=placeOrder(\"${restaurant.name}\")>
                     <li class="item restaurant-name">${restaurant.name}</li>
                     <li class="item restaurant-image">
                       <img src="${restaurant.image}">
