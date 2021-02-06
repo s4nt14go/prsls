@@ -36,7 +36,7 @@ const getRestaurants = async () => {
   }
 }
 
-module.exports.handler = async (event, context) => {
+module.exports.handler = async () => {
   const restaurants = await getRestaurants()
   console.log(`found ${restaurants.length} restaurants`)
   const dayOfWeek = days[new Date().getDay()]
@@ -48,6 +48,7 @@ module.exports.handler = async (event, context) => {
     restaurants,
     searchUrl: `${restaurantsApiRoot}/search`,
     placeOrderUrl: `${ordersApiRoot}`,
+    rootApiUrl: process.env.root_api,
   }
   const html = Mustache.render(template, view)
   return response = {

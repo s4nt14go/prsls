@@ -128,6 +128,7 @@
     const CLIENT_ID = '{{cognitoClientId}}';
     const SEARCH_URL = '{{& searchUrl}}';
     const PLACE_ORDER_URL = '{{& placeOrderUrl}}';
+    const ROOT_API_URL = '{{& rootApiUrl}}';
 
     var regDialog, regForm;
     var verifyDialog;
@@ -148,7 +149,24 @@
       enable === true ? $('#register').show() : $('#register').hide();
     }
 
-    const sleep = 5, statusUrl = PLACE_ORDER_URL + `/status`;
+    async function complete(orderId) {
+      const completeUrl = ROOT_API_URL + `/order/complete/${orderId}`;
+      console.log(`Completing order to ${completeUrl}`);
+      const complete = await fetch(completeUrl, {headers: {
+          Authorization: idToken,
+        }})
+        .then(response => {
+          return response.json();
+        })
+        .catch(e => {
+          console.log(e);
+          return e;
+        });
+      console.log(`complete`, complete);
+      alert(complete.message);
+    }
+
+    const sleep = 5, statusUrl = ROOT_API_URL + `/orders/status`;
     let notifications;
     let signedIn = false;
     async function fetchOrdersStatus() {
@@ -167,7 +185,7 @@
 
       console.log(`fetching ${statusUrl}...`);
       const orders = await fetch(statusUrl, {headers: {
-          'Authorization': idToken
+          Authorization: idToken
         }})
         .then(response => {
           return response.json();
@@ -178,11 +196,31 @@
         });
 
       console.log(`orders`, orders);
-      notifications.innerHTML = `Response from server: <b>${orders}</b>`;
+      notifications.innerHTML = `Response from server: <b>${orders.message || orders}</b>`;
       if (orders.length) {
         notifications.innerHTML = `<ul>`;
         notifications.innerHTML += orders.map(o => {
-          return `<li>Order: <b>${o.orderId}</b>, Restaurant: <b>${o.restaurantName}</b>, Status: <b>${o.status}</b></li>`;
+          let html = `<li>Order: <b>${o.orderId}</b>, Restaurant: <b>${o.restaurantName}</b>, Status: <b>${o.status}</b>`;
+
+          switch (o.status) {
+            case 'order_placed':
+              html += ` 🗒️`;
+              break;
+            case 'order_accepted':
+              html += ` 👩‍🍳 <button onclick='complete(\"${o.orderId}\")' style="display: inline; margin-left: 2px;">Complete</button>`;
+              break;
+            case 'order_rejected':
+              html += ` 🛑`;
+              break;
+            case 'completed':
+              html += ` ✔️`;
+              break;
+            default:
+              html += ` ❓️`;
+              console.error(`Unrecognized status: ${o.status}`);
+          }
+          html += `</li>`
+          return html;
         }).join('');
         notifications.innerHTML += `</ul>`;
       } else if (orders.length === 0) {

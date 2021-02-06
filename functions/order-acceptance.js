@@ -6,11 +6,21 @@ const DocumentClient = new DynamoDB.DocumentClient();
 const { bus_name, orders_table } = process.env
 
 module.exports.handler = async (event) => {
-  const { orderId, acceptance } = JSON.parse(event.body);
 
+  let parsed, response = { message: `Malformed input: ${event.body}` }
+  try {
+    parsed = JSON.parse(event.body)
+  } catch (e) {
+    console.log(e);
+    console.log(response.message);
+    return { statusCode: 200, body: JSON.stringify(response) };
+  }
+
+  const { orderId, acceptance } = parsed;
   console.log(`restaurant's acceptance for ${orderId} received: ${acceptance}`);
-  let response = { message: `orderId not received` }
-  if (!orderId) return { statusCode: 200, body: JSON.stringify(response) };
+
+  response.message = `orderId not received`;
+  if (!orderId) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
   response.message = `Order doesn't exist`;
   const order = (await DocumentClient.get({
@@ -19,13 +29,14 @@ module.exports.handler = async (event) => {
       orderId
     }
   }).promise()).Item;
-  if (!order) return { statusCode: 200, body: JSON.stringify(response) };
+  if (!order) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
   response.message = `Invalid acceptance: ${acceptance}`;
-  if (!['order_accepted', 'order_rejected'].includes(acceptance)) return { statusCode: 200, body: JSON.stringify(response) };
+  if (!['order_accepted', 'order_rejected'].includes(acceptance)) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
-  response.message = `Order ${orderId} should have status 'placed' before sending acceptance, current state is ${order.status}`;
-  if (order.status !== 'order_placed') return { statusCode: 200, body: JSON.stringify(response) };
+  const validStatus = 'order_placed';
+  response.message = `Order ${orderId} should have status ${validStatus} before sending acceptance, current state is ${order.status}`;
+  if (order.status !== validStatus) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
   await eventBridge.putEvents({
     Entries: [{

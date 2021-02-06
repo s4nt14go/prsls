@@ -47,6 +47,12 @@ functions:
           - - https://
             - !Ref ApiGatewayRestApi
             - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}/orders
+      root_api:
+        Fn::Join:
+          - ""
+          - - https://
+            - !Ref ApiGatewayRestApi
+            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
     iamRoleStatements:
       - Effect: Allow
         Action: execute-api:Invoke
@@ -174,6 +180,29 @@ functions:
       - Effect: Allow
         Action: dynamodb:Query
         Resource: !Sub "${OrdersTable.Arn}/index/bySub"
+
+  order-complete:
+    handler: functions/order-complete.handler
+    events:
+      - http:
+          path: /order/complete/{orderId}
+          method: get
+          authorizer:
+            name: CognitoAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt CognitoUserPool.Arn
+    environment:
+      orders_table: !Ref OrdersTable
+      bus_name: !Ref EventBus
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+        Resource: !GetAtt OrdersTable.Arn
+      - Effect: Allow
+        Action: events:PutEvents
+        Resource: "*"
 
 resources:
 
