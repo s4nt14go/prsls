@@ -1,7 +1,17 @@
 ### Production-Ready Serverless 
 
-1. [Place orders in restaurants](https://4pa10h0ae2.execute-api.us-east-1.amazonaws.com/dev)
-1. Simulate the restaurant response accepting or rejecting them curling like this:
+Place orders and accept/reject them done with Serverless Framework using AWS Lambda, API Gateway, DynamoDB, EventBridge, SNS, Cognito, SSM & SQS
+<br /><br />
+
+<p align="center">
+  <img src="doc/flow.jpg" />
+</p> 
+
+[▶️ Demo site](https://4pa10h0ae2.execute-api.us-east-1.amazonaws.com/dev)
+
+1. Sign in
+1. Place orders clicking in restaurants
+1. Simulate restaurant response accepting or rejecting them curling like this:
 
     ```shell script
     URL=https://4pa10h0ae2.execute-api.us-east-1.amazonaws.com/dev/order/acceptance

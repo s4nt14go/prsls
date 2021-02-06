@@ -383,7 +383,6 @@
         toggleSignOut(false);
       }
       signedIn = false;
-      idToken = null;
       lastOrders = [];
       notifications.innerHTML = '';
     }
@@ -423,6 +422,7 @@
     }
 
     function placeOrder(restaurantName) {
+      if (!signedIn) return alert('Please sign in before placing an order');
       var xhr = new XMLHttpRequest();
       xhr.open('POST', PLACE_ORDER_URL, true);
       xhr.setRequestHeader("Content-Type", "application/json");
