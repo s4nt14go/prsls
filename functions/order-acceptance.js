@@ -35,7 +35,7 @@ module.exports.handler = async (event) => {
   if (!['order_accepted', 'order_rejected'].includes(acceptance)) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
   const validStatus = 'order_placed';
-  response.message = `Order ${orderId} should have status ${validStatus} before sending acceptance, current state is ${order.status}`;
+  response.message = `Order ${orderId} should have status '${validStatus}' before sending acceptance, current state is '${order.status}'`;
   if (order.status !== validStatus) { console.log(response.message); return { statusCode: 200, body: JSON.stringify(response) }; }
 
   await eventBridge.putEvents({
