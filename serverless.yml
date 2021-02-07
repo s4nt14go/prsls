@@ -326,13 +326,13 @@ resources:
 
     E2eTestQueue:
       Type: AWS::SQS::Queue
-      Condition: IsE2eTest
+#      Condition: IsE2eTest
       Properties:
         MessageRetentionPeriod: 60
         VisibilityTimeout: 1
     E2eTestQueuePolicy:
       Type: AWS::SQS::QueuePolicy
-      Condition: IsE2eTest
+#      Condition: IsE2eTest
       Properties:
         Queues:
           - !Ref E2eTestQueue
@@ -355,7 +355,7 @@ resources:
                   aws:SourceArn: !GetAtt E2eTestEventBridgeRule.Arn
     E2eTestSnsSubscription:
       Type: AWS::SNS::Subscription
-      Condition: IsE2eTest
+#      Condition: IsE2eTest
       Properties:
         Protocol: sqs
         Endpoint: !GetAtt E2eTestQueue.Arn
@@ -365,7 +365,7 @@ resources:
 
     E2eTestEventBridgeRule:
       Type: AWS::Events::Rule
-      Condition: IsE2eTest
+#      Condition: IsE2eTest
       Properties:
         EventBusName: !Ref EventBus
         EventPattern:
@@ -409,11 +409,11 @@ resources:
             Projection:
               ProjectionType: ALL
 
-  Conditions:
-    IsE2eTest:
-      Fn::Equals:
-        - ${self:custom.stage}
-        - dev
+#  Conditions:
+#    IsE2eTest:
+#      Fn::Equals:
+#        - ${self:custom.stage}
+#        - dev
 
 
   Outputs:
@@ -450,6 +450,6 @@ resources:
     RestaurantNotificationTopicArn:
       Value: !Ref RestaurantNotificationTopic
 
-    E2eTestQueueUrl:
-      Condition: IsE2eTest
-      Value: !Ref E2eTestQueue
+#    E2eTestQueueUrl:
+#      Condition: IsE2eTest
+#      Value: !Ref E2eTestQueue
