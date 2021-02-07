@@ -13,6 +13,7 @@ custom:
     maxRequestsPerSecond: 10
     maxConcurrentRequests: 10
   stage: ${opt:stage, self:provider.stage}
+  onFailureQueueNameVar: ${self:service}-${self:custom.stage}-onFailureQueueForNotifyRestaurant
 
 provider:
   name: aws
@@ -163,6 +164,11 @@ functions:
       - Effect: Allow
         Action: sns:Publish
         Resource: !Ref RestaurantNotificationTopic
+      - Effect: Allow
+        Action: SQS:SendMessage
+        Resource: !GetAtt OnFailureQueue.Arn
+    destinations:
+      onFailure: arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:${self:custom.onFailureQueueNameVar}
 
   orders-status:
     handler: functions/orders-status.handler
@@ -408,6 +414,11 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+
+    OnFailureQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.onFailureQueueNameVar}
 
 #  Conditions:
 #    IsE2eTest:
