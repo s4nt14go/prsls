@@ -450,6 +450,6 @@ resources:
     RestaurantNotificationTopicArn:
       Value: !Ref RestaurantNotificationTopic
 
-#    E2eTestQueueUrl:
+    E2eTestQueueUrl:
 #      Condition: IsE2eTest
-#      Value: !Ref E2eTestQueue
+      Value: !Ref E2eTestQueue
