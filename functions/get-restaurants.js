@@ -1,5 +1,5 @@
+const wrap = require('@dazn/lambda-powertools-pattern-basic')
 const Log = require('@dazn/lambda-powertools-logger')
-const middy = require('@middy/core')
 const ssm = require('@middy/ssm')
 const { scanTable } = require('../lib/table')
 
@@ -23,7 +23,7 @@ const getRestaurants = async (count) => {
   return resp
 }
 
-module.exports.handler = middy(async (event, context) => {
+module.exports.handler = wrap(async (event, context) => {
   if (process.env.defaultResults === undefined) throw Error(`defaultResults wasn't picked up from SSM`);
   const restaurants = await getRestaurants(process.env.defaultResults)
   return {

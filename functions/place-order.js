@@ -1,3 +1,4 @@
+const wrap = require('@dazn/lambda-powertools-pattern-basic')
 const Log = require('@dazn/lambda-powertools-logger')
 const EventBridge = require('aws-sdk/clients/eventbridge')
 const eventBridge = new EventBridge()
@@ -7,7 +8,7 @@ const DocumentClient = new DynamoDB.DocumentClient();
 
 const { bus_name, orders_table } = process.env
 
-module.exports.handler = async (event) => {
+module.exports.handler = wrap(async (event, context) => {
   const restaurantName = JSON.parse(event.body).restaurantName
 
   const orderId = chance.guid()
@@ -46,4 +47,4 @@ module.exports.handler = async (event) => {
     statusCode: 200,
     body: JSON.stringify({ orderId })
   }
-}
+})
