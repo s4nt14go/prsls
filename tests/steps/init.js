@@ -1,6 +1,7 @@
 require('dotenv').config()
 const { promisify } = require('util')
 const awscred = require('awscred')
+console.error = jest.fn()
 
 let initialized = false
 
@@ -20,6 +21,8 @@ const init = async () => {
   }
 
   console.log('AWS credential loaded')
+
+  process.env.AWS_XRAY_CONTEXT_MISSING = 'LOG_ERROR'
 
   initialized = true
 }
