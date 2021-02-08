@@ -1,3 +1,5 @@
+const AWSXRay = require('aws-xray-sdk-core')
+AWSXRay.captureHTTPsGlobal(require('https'))
 const wrap = require('@dazn/lambda-powertools-pattern-basic')
 const Log = require('@dazn/lambda-powertools-logger')
 const fs = require("fs")
