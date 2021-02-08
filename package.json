@@ -37,6 +37,7 @@
     "@middy/core": "^1.5.2",
     "@middy/ssm": "^1.5.2",
     "@middy/validator": "^1.5.2",
+    "aws-xray-sdk-core": "^3.2.0",
     "aws4": "^1.11.0",
     "axios": "^0.21.1",
     "chance": "^1.1.7",

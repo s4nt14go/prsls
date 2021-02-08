@@ -2,6 +2,8 @@ const EventBridge = require('aws-sdk/clients/eventbridge')
 const eventBridge = new EventBridge()
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const DocumentClient = new DynamoDB.DocumentClient();
+const XRay = require('aws-xray-sdk-core')
+XRay.captureAWSClient(DocumentClient.service)
 
 const { bus_name, orders_table } = process.env
 
