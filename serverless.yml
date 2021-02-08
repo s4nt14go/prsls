@@ -111,7 +111,6 @@ functions:
     environment:
       bus_name: !Ref EventBus
       orders_table: !Ref OrdersTable
-      sm: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:${self:service}-${self:custom.stage}-sm
     iamRoleStatements:
       - Effect: Allow
         Action: events:PutEvents
@@ -119,9 +118,6 @@ functions:
       - Effect: Allow
         Action: dynamodb:PutItem
         Resource: !GetAtt OrdersTable.Arn
-      - Effect: Allow
-        Action: states:StartExecution
-        Resource: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:${self:service}-${self:custom.stage}-sm
 
   order-acceptance:
     handler: functions/order-acceptance.handler
@@ -235,67 +231,6 @@ functions:
       - Effect: Allow
         Action: events:PutEvents
         Resource: "*"
-
-stepFunctions:
-  stateMachines:
-    sm:
-      name: ${self:service}-${self:custom.stage}-sm
-      definition:
-        Comment: "Place orders in restaurants"
-        StartAt: WaitForRestaurantAcceptance
-        States:
-          WaitForRestaurantAcceptance:
-            Type: Wait
-            Seconds: 10
-            Next: OrderStatus1
-          OrderStatus1:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ order-status, Arn ]
-            ResultPath: $
-            Next: IsAccepted
-          IsAccepted:
-            Type: Choice
-            Choices:
-              - Variable: $.status
-                StringEquals: 'order_placed'
-                Next: WaitForRestaurantAcceptance
-              - Variable: $.status
-                StringEquals: 'order_accepted'
-                Next: WaitForCompletion
-              - Variable: $.status
-                StringEquals: 'order_rejected'
-                Next: Rejected
-            Default: StatusUnrecognized
-          WaitForCompletion:
-            Type: Wait
-            Seconds: 10
-            Next: OrderStatus2
-          OrderStatus2:
-            Type: Task
-            Resource:
-              Fn::GetAtt: [ order-status, Arn ]
-            ResultPath: $
-            Next: IsCompleted
-          IsCompleted:
-            Type: Choice
-            Choices:
-              - Variable: $.status
-                StringEquals: 'completed'
-                Next: Completed
-              - Variable: $.status
-                StringEquals: 'order_accepted'
-                Next: WaitForCompletion
-            Default: StatusUnrecognized
-          Rejected:
-            Type: Pass
-            End: true
-          Completed:
-            Type: Pass
-            End: true
-          StatusUnrecognized:
-            Type: Pass
-            End: true
 
 resources:
 

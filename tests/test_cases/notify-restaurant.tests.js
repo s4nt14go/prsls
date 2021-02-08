@@ -66,16 +66,15 @@ describe(`When we invoke the notify-restaurant function`, () => {
       })
     })
   } else {
-    it(`Should publish message to SNS`, async (done) => {
+    it(`Should publish message to SNS`, async () => {
       await messages.waitForMessage(
         'sns',
         process.env.RESTAURANT_NOTIFICATION_TOPIC_ARN,
         JSON.stringify(event.detail)
       )
-      done();
     }, 10000)
 
-    it(`Should publish "restaurant_notified" event to EventBridge`, async (done) => {
+    it(`Should publish "restaurant_notified" event to EventBridge`, async () => {
       await messages.waitForMessage(
         'eventbridge',
         process.env.EVENT_BUS_NAME,
@@ -84,7 +83,6 @@ describe(`When we invoke the notify-restaurant function`, () => {
           'detail-type': 'restaurant_notified'
         })
       )
-      done();
     }, 10000)
   }
 })

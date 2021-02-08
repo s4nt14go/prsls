@@ -9,9 +9,6 @@ console.log = jest.fn()
 const mockPutEvents = jest.fn()
 AWS.EventBridge.prototype.putEvents = mockPutEvents
 
-const mockStartExecution = jest.fn()
-AWS.StepFunctions.prototype.startExecution = mockStartExecution
-
 describe('Given an authenticated user', () => {
   let user
 
@@ -29,14 +26,10 @@ describe('Given an authenticated user', () => {
 
     beforeAll(async () => {
       if (process.env.TEST_MODE === 'handler') {
-      mockPutEvents.mockClear()
-      mockPutEvents.mockReturnValue({
-        promise: async () => {}
-      })
-      mockStartExecution.mockClear()
-      mockStartExecution.mockReturnValue({
-        promise: async () => {}
-      })
+        mockPutEvents.mockClear()
+        mockPutEvents.mockReturnValue({
+          promise: async () => {}
+        })
       } else {
         messages.startListening()
       }
@@ -62,7 +55,7 @@ describe('Given an authenticated user', () => {
         })
       })
     } else {
-      it(`Should publish a message to EventBridge bus`, async (done) => {
+      it(`Should publish a message to EventBridge bus`, async () => {
         const { orderId } = resp.body
 
         await messages.waitForMessage(
@@ -77,7 +70,6 @@ describe('Given an authenticated user', () => {
             }
           })
         )
-        done();
       }, 10000)
     }
   })
