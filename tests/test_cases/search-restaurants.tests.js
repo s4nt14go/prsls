@@ -45,7 +45,7 @@ describe('Given an authenticated user', () => {
       const res = await when.we_invoke_search_restaurants(theme, user)
 
       expect(res.statusCode).toEqual(200)
-      expect(res.body).toHaveLength(quantity)
+      expect(res.body.length).toBeGreaterThanOrEqual(quantity) // Take into account the restaurants created for the test and others already existent
 
       for (const restaurant of res.body) {
         expect(restaurant).toHaveProperty('name')
