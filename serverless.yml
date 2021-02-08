@@ -1,11 +1,5 @@
 service: workshop-${self:custom.name}
 
-plugins:
-  - serverless-export-env
-  - serverless-pseudo-parameters
-  - serverless-api-gateway-throttling
-  - serverless-iam-roles-per-function
-
 custom:
   name: santiago
   email: santiagopergamo@gmail.com
@@ -117,6 +111,7 @@ functions:
     environment:
       bus_name: !Ref EventBus
       orders_table: !Ref OrdersTable
+      sm: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:${self:service}-${self:custom.stage}-sm
     iamRoleStatements:
       - Effect: Allow
         Action: events:PutEvents
@@ -124,6 +119,9 @@ functions:
       - Effect: Allow
         Action: dynamodb:PutItem
         Resource: !GetAtt OrdersTable.Arn
+      - Effect: Allow
+        Action: states:StartExecution
+        Resource: arn:aws:states:#{AWS::Region}:#{AWS::AccountId}:stateMachine:${self:service}-${self:custom.stage}-sm
 
   order-acceptance:
     handler: functions/order-acceptance.handler
@@ -187,6 +185,15 @@ functions:
         Action: dynamodb:Query
         Resource: !Sub "${OrdersTable.Arn}/index/bySub"
 
+  order-status:
+    handler: functions/order-status.handler
+    environment:
+      orders_table: !Ref OrdersTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:GetItem
+        Resource: !GetAtt OrdersTable.Arn
+
   order-complete:
     handler: functions/order-complete.handler
     events:
@@ -229,6 +236,67 @@ functions:
         Action: events:PutEvents
         Resource: "*"
 
+stepFunctions:
+  stateMachines:
+    sm:
+      name: ${self:service}-${self:custom.stage}-sm
+      definition:
+        Comment: "Place orders in restaurants"
+        StartAt: WaitForRestaurantAcceptance
+        States:
+          WaitForRestaurantAcceptance:
+            Type: Wait
+            Seconds: 10
+            Next: OrderStatus1
+          OrderStatus1:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ order-status, Arn ]
+            ResultPath: $
+            Next: IsAccepted
+          IsAccepted:
+            Type: Choice
+            Choices:
+              - Variable: $.status
+                StringEquals: 'order_placed'
+                Next: WaitForRestaurantAcceptance
+              - Variable: $.status
+                StringEquals: 'order_accepted'
+                Next: WaitForCompletion
+              - Variable: $.status
+                StringEquals: 'order_rejected'
+                Next: Rejected
+            Default: StatusUnrecognized
+          WaitForCompletion:
+            Type: Wait
+            Seconds: 10
+            Next: OrderStatus2
+          OrderStatus2:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [ order-status, Arn ]
+            ResultPath: $
+            Next: IsCompleted
+          IsCompleted:
+            Type: Choice
+            Choices:
+              - Variable: $.status
+                StringEquals: 'completed'
+                Next: Completed
+              - Variable: $.status
+                StringEquals: 'order_accepted'
+                Next: WaitForCompletion
+            Default: StatusUnrecognized
+          Rejected:
+            Type: Pass
+            End: true
+          Completed:
+            Type: Pass
+            End: true
+          StatusUnrecognized:
+            Type: Pass
+            End: true
+
 resources:
 
   Transform:
@@ -241,6 +309,14 @@ resources:
     MacroParamTopicArn:
       Type: String
       Default: arn:aws:sns:us-east-1:383542339255:AddCloudWatchAlarmsMacro
+
+  Conditions:
+    IsE2eTest:
+      Fn::Equals:
+        # Changed to be always true (instead of only for stage dev), because if we don't include e2e tests infra, those tests will fail
+        # - ${self:custom.stage}
+        - dev
+        - dev
 
   Resources:
     RestaurantsTable:
@@ -332,13 +408,14 @@ resources:
 
     E2eTestQueue:
       Type: AWS::SQS::Queue
-#      Condition: IsE2eTest
+      Condition: IsE2eTest
       Properties:
         MessageRetentionPeriod: 60
         VisibilityTimeout: 1
+
     E2eTestQueuePolicy:
       Type: AWS::SQS::QueuePolicy
-#      Condition: IsE2eTest
+      Condition: IsE2eTest
       Properties:
         Queues:
           - !Ref E2eTestQueue
@@ -359,9 +436,10 @@ resources:
               Condition:
                 ArnEquals:
                   aws:SourceArn: !GetAtt E2eTestEventBridgeRule.Arn
+
     E2eTestSnsSubscription:
       Type: AWS::SNS::Subscription
-#      Condition: IsE2eTest
+      Condition: IsE2eTest
       Properties:
         Protocol: sqs
         Endpoint: !GetAtt E2eTestQueue.Arn
@@ -371,7 +449,7 @@ resources:
 
     E2eTestEventBridgeRule:
       Type: AWS::Events::Rule
-#      Condition: IsE2eTest
+      Condition: IsE2eTest
       Properties:
         EventBusName: !Ref EventBus
         EventPattern:
@@ -394,6 +472,7 @@ resources:
                   },
                   "eventBusName": "#{EventBus}"
                 }
+
 
     OrdersTable:
       Type: AWS::DynamoDB::Table
@@ -420,23 +499,7 @@ resources:
       Properties:
         QueueName: ${self:custom.onFailureQueueNameVar}
 
-#  Conditions:
-#    IsE2eTest:
-#      Fn::Equals:
-#        - ${self:custom.stage}
-#        - dev
-
-
   Outputs:
-
-    RestApiUrl:
-      Value:
-        Fn::Join:
-          - ""
-          - - https://
-            - !Ref ApiGatewayRestApi
-            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
-
     RestaurantsTableName:
       Value: !Ref RestaurantsTable
 
@@ -462,5 +525,20 @@ resources:
       Value: !Ref RestaurantNotificationTopic
 
     E2eTestQueueUrl:
-#      Condition: IsE2eTest
+      Condition: IsE2eTest
       Value: !Ref E2eTestQueue
+
+    RestApiUrl:
+      Value:
+        Fn::Join:
+          - ""
+          - - https://
+            - !Ref ApiGatewayRestApi
+            - .execute-api.${self:provider.region}.amazonaws.com/${self:custom.stage}
+
+plugins:
+  - serverless-export-env
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+  - serverless-api-gateway-throttling
+  - serverless-step-functions
