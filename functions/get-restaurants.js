@@ -18,7 +18,7 @@ const getRestaurants = async (count) => {
 
   const resp = await scanTable(req);
   Log.debug('found restaurants', {
-    count: resp.Items.length
+    count: resp.length
   })
   return resp
 }
