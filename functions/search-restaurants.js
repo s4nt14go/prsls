@@ -1,3 +1,4 @@
+const Log = require('@dazn/lambda-powertools-logger')
 const wrap = require('../lib/wrapper')
 const { scanTable } = require('../lib/table')
 
@@ -5,7 +6,7 @@ const tableName = process.env.restaurants_table
 
 const findRestaurantsByTheme = async (theme, count) => {
   if (typeof Number(count) !== 'number') throw Error(`Invalid count: ${count}`);
-  console.log(`finding (up to ${count}) restaurants with the theme ${theme}...`)
+  Log.debug(`finding restaurants`, {Limit: count, theme})
   const req = {
     TableName: tableName,
     Limit: count,
@@ -16,12 +17,12 @@ const findRestaurantsByTheme = async (theme, count) => {
   }
 
   const resp = await scanTable(req);
-  console.log(`found ${resp.length} restaurants`)
+  Log.debug(`restaurants found`, {length: resp.length})
   return resp
 }
 
 module.exports.handler = wrap(async (event, context) => {
-  console.log('context.secretString', context.secretString);
+  Log.debug('context.secretString', {secretString: context.secretString});
   if (context.secretString === undefined) throw Error(`secretString not gotten`);
   const req = JSON.parse(event.body)
   const theme = req.theme

@@ -8,6 +8,9 @@ custom:
     maxConcurrentRequests: 10
   stage: ${opt:stage, self:provider.stage}
   onFailureQueueNameVar: ${self:service}-${self:custom.stage}-onFailureQueueForNotifyRestaurant
+  logLevel:
+    prod: INFO
+    default: DEBUG
 
 provider:
   name: aws
@@ -19,6 +22,7 @@ provider:
   environment:
     serviceName: ${self:service}
     stage: ${self:custom.stage}
+    LOG_LEVEL: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
 
 functions:
   get-index:

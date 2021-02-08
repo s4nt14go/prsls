@@ -1,3 +1,4 @@
+const Log = require('@dazn/lambda-powertools-logger')
 const middy = require('@middy/core')
 const ssm = require('@middy/ssm')
 const { scanTable } = require('../lib/table')
@@ -6,14 +7,19 @@ const { serviceName/*, stage*/ } = process.env
 const tableName = process.env.restaurants_table
 
 const getRestaurants = async (count) => {
-  console.log(`fetching ${count} restaurants from ${tableName}...`)
+  Log.debug('getting restaurants from DynamoDB...', {
+    count,
+    tableName
+  })
   const req = {
     TableName: tableName,
     Limit: count
   }
 
   const resp = await scanTable(req);
-  console.log(`found ${resp.length} restaurants`)
+  Log.debug('found restaurants', {
+    count: resp.Items.length
+  })
   return resp
 }
 
