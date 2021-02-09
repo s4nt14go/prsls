@@ -1,3 +1,4 @@
+const CorrelationIds = require('@dazn/lambda-powertools-correlation-ids')
 const AWSXRay = require('aws-xray-sdk-core')
 AWSXRay.captureHTTPsGlobal(require('https'))
 const wrap = require('@dazn/lambda-powertools-pattern-basic')
@@ -29,7 +30,7 @@ const getRestaurants = async () => {
   aws4.sign(opts)
 
   const httpReq = http.get(restaurantsApiRoot, {
-    headers: opts.headers
+    headers: Object.assign({}, opts.headers, CorrelationIds.get())
   })
   console.info(`Will try to get ${restaurantsApiRoot}`);
   try {
