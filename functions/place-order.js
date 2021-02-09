@@ -1,12 +1,10 @@
 const wrap = require('@dazn/lambda-powertools-pattern-basic')
 const Log = require('@dazn/lambda-powertools-logger')
-const EventBridge = require('aws-sdk/clients/eventbridge')
 const XRay = require('aws-xray-sdk-core')
-const eventBridge = XRay.captureAWSClient(new EventBridge())
 const chance = require('chance').Chance()
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const DocumentClient = new DynamoDB.DocumentClient();
-XRay.captureAWSClient(DocumentClient.service)
+const eventBridge = XRay.captureAWSClient(require('@dazn/lambda-powertools-eventbridge-client'))
 
 const { bus_name, orders_table } = process.env
 
