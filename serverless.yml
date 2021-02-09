@@ -13,6 +13,9 @@ custom:
     default: DEBUG
   serverless-iam-roles-per-function:
     defaultInherit: true
+  lumigo:
+    token: t_ad44ccc902ce40dfbd849
+    nodePackageManager: npm
 
 provider:
   name: aws
@@ -494,3 +497,4 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-api-gateway-throttling
   - serverless-step-functions
+  - serverless-lumigo
