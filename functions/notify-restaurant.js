@@ -17,7 +17,7 @@ module.exports.handler = wrap(async (event, context) => {
   await sns.publish(snsReq).promise()
 
   const { restaurantName, orderId } = order
-  Log.debug(`restaurant notified`,{ restaurantName, orderId})
+  Log.debug('notified restaurant')
 
   await eventBridge.putEvents({
     Entries: [{
