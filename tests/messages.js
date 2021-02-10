@@ -60,11 +60,19 @@ const waitForMessage = (sourceType, source, message) => {
   let subscription
   return new Promise((resolve) => {
     subscription = messages.subscribe(incomingMessage => {
-      console.log('has', incomingMessage)
-      if (incomingMessage.sourceType === sourceType &&
-        incomingMessage.source === source &&
-        incomingMessage.message === message) {
-        resolve()
+      if (incomingMessage.sourceType === sourceType && incomingMessage.source === source) {
+        if (message === incomingMessage.message) {
+          resolve();
+        } else if (sourceType === 'eventbridge') {
+          if (typeof message === 'string') message = JSON.parse(message); // in the first event 'restaurant_notified', message is string, while for the next are objects
+          incomingMessage.message = JSON.parse(incomingMessage.message);
+           if ( message.source === incomingMessage.message.source &&
+                message['detail-type'] === incomingMessage.message['detail-type'] &&
+                message.detail.orderId === incomingMessage.message.detail.orderId &&
+                message.detail.restaurantName === incomingMessage.message.detail.restaurantName) {
+                  resolve();
+          }
+        }
       }
     })
   }).then(() => subscription.unsubscribe())

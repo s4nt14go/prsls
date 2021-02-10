@@ -140,7 +140,6 @@ functions:
       - Effect: Allow
         Action: dynamodb:PutItem
         Resource: !GetAtt OrdersTable.Arn
-    memorySize: 512
 
   order-acceptance:
     handler: functions/order-acceptance.handler
