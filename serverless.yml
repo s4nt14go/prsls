@@ -256,16 +256,17 @@ functions:
 
 resources:
 
-  Transform:
+# Comment alarms to avoid CloudWatch costs (showed in Cost Explorer as "CW:Alarm Monitor Usage" and "CW:GMD-Metrics" when Group by "Usage Type")
+#  Transform:
     # assuming this is the name you gave the macro when you deployed the SAR app
-    - AddCloudWatchAlarms
-  Parameters:
-    MacroParamStage:
-      Type: String
-      Default: ${self:custom.stage}
-    MacroParamTopicArn:
-      Type: String
-      Default: arn:aws:sns:us-east-1:383542339255:AddCloudWatchAlarmsMacro
+#    - AddCloudWatchAlarms
+#  Parameters:
+#    MacroParamStage:
+#      Type: String
+#      Default: ${self:custom.stage}
+#    MacroParamTopicArn:
+#      Type: String
+#      Default: arn:aws:sns:us-east-1:383542339255:AddCloudWatchAlarmsMacro
 
   Conditions:
     IsE2eTest:
