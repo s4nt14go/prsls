@@ -114,11 +114,11 @@ functions:
         Resource:
           # Use parameters from dev for all environments
           - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
-          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/secretString
-      - Effect: Allow
-        Action: kms:Decrypt
+#          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/secretString
+#      - Effect: Allow
+#        Action: kms:Decrypt
         # Use parameters from dev for all environments
-        Resource: ${ssm:/dev/kmsArn}
+#        Resource: ${ssm:/dev/kmsArn}
 
   place-order:
     handler: functions/place-order.handler

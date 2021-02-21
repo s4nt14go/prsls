@@ -22,8 +22,7 @@ const findRestaurantsByTheme = async (theme, count) => {
 }
 
 module.exports.handler = wrap(async (event, context) => {
-  Log.debug('context.secretString', {secretString: context.secretString});
-  if (context.secretString === undefined) throw Error(`secretString not gotten`);
+  // Log.debug('context.secretString', {secretString: context.secretString});
   const req = JSON.parse(event.body)
   const theme = req.theme
   const restaurants = await findRestaurantsByTheme(theme, process.env.defaultResults)

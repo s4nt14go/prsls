@@ -24,7 +24,6 @@ const getRestaurants = async (count) => {
 }
 
 module.exports.handler = wrap(async (event, context) => {
-  if (process.env.defaultResults === undefined) throw Error(`defaultResults wasn't picked up from SSM`);
   const restaurants = await getRestaurants(process.env.defaultResults)
   return {
     statusCode: 200,
