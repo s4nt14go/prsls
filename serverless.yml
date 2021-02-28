@@ -114,6 +114,7 @@ functions:
         Resource:
           # Use parameters from dev for all environments
           - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
+#          Don't use SecureString parameter called "secretString", in order to delete "KMS Customer managed key" (with arn stored in parameter store "/dev/kmsArn") created so to avoid "Key Management Service" costs
 #          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/secretString
 #      - Effect: Allow
 #        Action: kms:Decrypt
