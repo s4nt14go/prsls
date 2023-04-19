@@ -32,40 +32,41 @@ Place orders and accept/reject them done with Serverless Framework using AWS Lam
 
 1. Use Node 12 version as in lambdas and [pipeline](.github/workflows), using [nvm](https://github.com/nvm-sh/nvm) you can:
 
-```
-# set Node 12 in current terminal
-nvm use 12
-# set Node 12 as default (new terminals will use 12)
-nvm alias default 12
-```
-
+    ```
+    # set Node 12 in current terminal
+    nvm use 12
+    # set Node 12 as default (new terminals will use 12)
+    nvm alias default 12
+    ```
+   
 1. Install dependencies and deploy on your stage (provided you configured your AWS credentials)
 
-```shell script
-npm ci
-# deploy on dev stage
-npm run sls -- deploy
-# ...to deploy on prod stage
-npm run sls -- deploy -s prod
-```
+    ```shell script
+    npm ci
+    # deploy on dev stage
+    npm run sls -- deploy
+    # ...to deploy on prod stage
+    npm run sls -- deploy -s prod
+    ```
 
 1. Configure these parameters in `AWS Systems Manager > Parameter Store`:
-`/prsls/${stage}/get-restaurants/config`: 
-```json
-{
-   "defaultResults": 8
-}
-```
-`/prsls/${stage}/search-restaurants/config`:
-```json
-{
-   "defaultResults": 8
-}
-```
+
+    `/prsls/${stage}/get-restaurants/config`: 
+    ```json
+    {
+       "defaultResults": 8
+    }
+    ```
+    `/prsls/${stage}/search-restaurants/config`:
+    ```json
+    {
+       "defaultResults": 8
+    }
+    ```
 
 1. Populate the database with restaurants:
 
-```shell script
-export restaurants_table=<DynamoDB table for the stage>
-node -e 'require("./tests/steps/given.js").eight_initial_restaurants()'
-```
+    ```shell script
+    export restaurants_table=<DynamoDB table for the stage>
+    node -e 'require("./tests/steps/given.js").eight_initial_restaurants()'
+    ```
