@@ -84,8 +84,7 @@ functions:
         Resource: !GetAtt RestaurantsTable.Arn
       - Effect: Allow
         Action: ssm:GetParameters*
-        # Use parameters from dev for all environments
-        Resource: arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/get-restaurants/config
+        Resource: arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/${self:custom.stage}/get-restaurants/config
     memorySize: 512
 
   search-restaurants:
@@ -107,10 +106,9 @@ functions:
       - Effect: Allow
         Action: ssm:GetParameters*
         Resource:
-          # Use parameters from dev for all environments
-          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/config
+          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/${self:custom.stage}/search-restaurants/config
 #          Don't use SecureString parameter called "secretString", in order to delete "KMS Customer managed key" (with arn stored in parameter store "/dev/kmsArn") created so to avoid "Key Management Service" costs
-#          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/dev/search-restaurants/secretString
+#          - arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:service}/${self:custom.stage}/search-restaurants/secretString
 #      - Effect: Allow
 #        Action: kms:Decrypt
         # Use parameters from dev for all environments

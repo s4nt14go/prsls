@@ -3,7 +3,7 @@ const Log = require('@dazn/lambda-powertools-logger')
 const ssm = require('@middy/ssm')
 const { scanTable } = require('../lib/table')
 
-const { serviceName/*, stage*/ } = process.env
+const { serviceName, stage } = process.env
 const tableName = process.env.restaurants_table
 
 const getRestaurants = async (count) => {
@@ -33,9 +33,7 @@ module.exports.handler = wrap(async (event, context) => {
   cache: true,
   cacheExpiryInMillis: 5 * 60 * 1000, // 5 mins
   names: {
-    // config: `/${serviceName}/${stage}/get-restaurants/config`
-    // Use parameters from "dev" stage for all environments
-    config: `/${serviceName}/dev/get-restaurants/config`
+    config: `/${serviceName}/${stage}/get-restaurants/config`
   },
   onChange: () => {
     const config = JSON.parse(process.env.config)
