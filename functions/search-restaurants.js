@@ -4,8 +4,9 @@ const { scanTable } = require('../lib/table')
 
 const tableName = process.env.restaurants_table
 
-const findRestaurantsByTheme = async (theme, count) => {
+const findRestaurantsByTheme = async (_theme, count) => {
   if (typeof Number(count) !== 'number') throw Error(`Invalid count: ${count}`);
+  const theme = _theme.toLowerCase();
   Log.debug(`finding restaurants`, {Limit: count, theme})
   const req = {
     TableName: tableName,

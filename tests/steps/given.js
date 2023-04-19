@@ -7,42 +7,42 @@ let initialRestaurants = [
   {
     name: "Fangtasia",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/fangtasia.png",
-    themes: ["true blood"]
+    themes: ["Fangtasia".toLowerCase(), "true blood"]
   },
   {
     name: "Shoney's",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/shoney's.png",
-    themes: ["cartoon", "rick and morty"]
+    themes: ["Shoney's".toLowerCase(), "shoney", "cartoon", "rick and morty"]
   },
   {
     name: "Freddy's BBQ Joint",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/freddy's+bbq+joint.png",
-    themes: ["netflix", "house of cards"]
+    themes: ["Freddy's BBQ Joint".toLowerCase(), "freddy", "bbq", "joint", "netflix", "house of cards"]
   },
   {
     name: "Pizza Planet",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/pizza+planet.png",
-    themes: ["netflix", "toy story"]
+    themes: ["Pizza Planet".toLowerCase(), "pizza", "planet", "netflix", "toy story"]
   },
   {
     name: "Leaky Cauldron",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/leaky+cauldron.png",
-    themes: ["movie", "harry potter"]
+    themes: ["Leaky Cauldron".toLowerCase(), "leaky", "cauldron", "movie", "harry potter"]
   },
   {
     name: "Lil' Bits",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/lil+bits.png",
-    themes: ["cartoon", "rick and morty"]
+    themes: ["Lil' Bits".toLowerCase(), "lil", "bits", "cartoon", "rick and morty"]
   },
   {
     name: "Fancy Eats",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/fancy+eats.png",
-    themes: ["cartoon", "rick and morty"]
+    themes: ["Fancy Eats".toLowerCase(), "fancy", "eats", "cartoon", "rick and morty"]
   },
   {
     name: "Don Cuco",
     image: "https://d2qt42rcwzspd6.cloudfront.net/manning/don%20cuco.png",
-    themes: ["cartoon", "rick and morty"]
+    themes: ["Don Cuco".toLowerCase(), "don", "cuco", "cartoon", "rick and morty"]
   },
 ];
 // needs number, special char, upper and lower case
