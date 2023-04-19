@@ -1,8 +1,6 @@
-service: workshop-${self:custom.name}
+service: prsls
 
 custom:
-  name: santiago
-  email: santiagopergamo@gmail.com
   apiGatewayThrottling:
     maxRequestsPerSecond: 10
     maxConcurrentRequests: 10
@@ -13,9 +11,6 @@ custom:
     default: DEBUG
   serverless-iam-roles-per-function:
     defaultInherit: true
-  lumigo:
-    token: t_ad44ccc902ce40dfbd849
-    nodePackageManager: npm
 
 provider:
   name: aws
@@ -501,4 +496,3 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-api-gateway-throttling
   - serverless-step-functions
-  - serverless-lumigo
