@@ -3,7 +3,6 @@ const when = require('../steps/when')
 const AWS = require('aws-sdk')
 const chance = require('chance').Chance()
 const messages = require('../messages')
-console.log = jest.fn()
 
 const mockPutEvents = jest.fn()
 const mockPublish = jest.fn()

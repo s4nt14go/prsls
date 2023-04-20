@@ -10,7 +10,7 @@
     "artillery": "artillery run artillery/artillery.yml",
     "dotEnv": "sls export-env",
     "test": "cross-env TEST_MODE=handler jest --verbose",
-    "acceptance": "cross-env TEST_MODE=http jest --verbose"
+    "acceptance": "cross-env TEST_MODE=http jest --verbose --forceExit"
   },
   "keywords": [],
   "author": "",
