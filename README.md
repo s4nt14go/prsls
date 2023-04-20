@@ -14,18 +14,18 @@ Place orders and accept/reject them done with Serverless Framework using AWS Lam
 1. Simulate restaurant response accepting or rejecting them curling like this:
 
     ```shell script
-    URL=https://8k6h.short.gy/prsls/order/acceptance
+    ACCEPTANCE_URL=https://kivreyrdy3.execute-api.us-east-1.amazonaws.com/prod/order/acceptance
     ORDER=<your order>
     ACCEPTANCE=<order_accepted || order_rejected> 
-    curl -d '{"orderId":"'"${ORDER}"'", "acceptance":"'"${ACCEPTANCE}"'"}' -H "Content-Type: application/json" -X POST $URL
+    curl -d '{"orderId":"'"${ORDER}"'", "acceptance":"'"${ACCEPTANCE}"'"}' -H "Content-Type: application/json" -X POST $ACCEPTANCE_URL
     ```
 1. In the case you accepted the order you can complete it
 1. Once you complete or reject the order you can delete it curling like this:
    ```shell script
-   ENDPOINT=https://8k6h.short.gy/prsls/order/delete
+   DELETE_URL=https://kivreyrdy3.execute-api.us-east-1.amazonaws.com/prod/order/delete
    ORDER=<your order>
    curl --request GET \
-     --url $ENDPOINT/$ORDER
+     --url $ENDPOINT/$DELETE_URL
    ```
    
 #### Deployment instructions
