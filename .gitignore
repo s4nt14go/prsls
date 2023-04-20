@@ -7,5 +7,4 @@ jspm_packages
 /.idea/
 /.env*
 /notas.txt
-/run.sh
 /setAwsProfile.sh
