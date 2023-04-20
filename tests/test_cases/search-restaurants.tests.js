@@ -3,7 +3,6 @@ const { init } = require('../steps/init')
 const when = require('../steps/when')
 const tearDown = require('../steps/tearDown')
 const given = require('../steps/given')
-console.log = jest.fn()
 
 describe('Given an authenticated user', () => {
   let user, restaurantsCreated, quantity, theme;
@@ -15,7 +14,7 @@ describe('Given an authenticated user', () => {
     user = await given.an_authenticated_user()
 
     quantity = chance.integer({ min: 1, max: 5 });
-    theme = chance.animal();
+    theme = chance.animal().toLowerCase()
     console.log('Random theme', theme);
     restaurantsCreated = await given.restaurants_with_a_theme(theme, quantity)
   })

@@ -1,4 +1,3 @@
-console.log = jest.fn()
 const cheerio = require('cheerio')
 const when = require('../steps/when')
 const { init } = require('../steps/init')
