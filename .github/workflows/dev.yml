@@ -18,8 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: npm ci
-        run: npm ci
+      - name: npm i
+        run: npm i
 
       - name: deploy to dev
         run: |
