@@ -45,7 +45,7 @@ Place orders and accept/reject them done with Serverless Framework using AWS Lam
 1. Install dependencies and deploy on your stage (provided you configured your AWS credentials)
 
     ```shell script
-    npm ci
+    npm i
     # deploy on dev stage
     npm run sls -- deploy
     # ...to deploy on prod stage
