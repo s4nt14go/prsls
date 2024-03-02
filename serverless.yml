@@ -4,7 +4,8 @@ custom:
   apiGatewayThrottling:
     maxRequestsPerSecond: 10
     maxConcurrentRequests: 10
-  stage: ${opt:stage, self:provider.stage}
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, self:provider.region}
   onFailureQueueNameVar: ${self:service}-${self:custom.stage}-onFailureQueueForNotifyRestaurant
   logLevel:
     prod: INFO
@@ -14,7 +15,7 @@ custom:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs20.x
   stackTags:
     STACK: ${self:service}
   tags:

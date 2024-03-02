@@ -30,13 +30,13 @@ Place orders and accept/reject them done with Serverless Framework using AWS Lam
    
 #### Deployment instructions
 
-1. Use Node 12 version as in lambdas and [pipeline](.github/workflows), using [nvm](https://github.com/nvm-sh/nvm) you can:
+1. Use Node 20 version, using [nvm](https://github.com/nvm-sh/nvm) you can:
 
     ```
-    # set Node 12 in current terminal
-    nvm use 12
-    # set Node 12 as default (new terminals will use 12)
-    nvm alias default 12
+    # set Node 20 in current terminal
+    nvm use 20
+    # set Node 20 as default (new terminals will use 20)
+    nvm alias default 20
     ```
    
 1. Install dependencies and deploy on your stage (provided you configured your AWS credentials)
